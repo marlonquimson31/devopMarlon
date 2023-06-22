@@ -1,0 +1,296 @@
+Task 2: cybersec position ?
+
+source port destination: port
+reliable:TCP : S A W - sec ac windows = "3 way handshake"
+unrealible UDP
+2. Layer 3 PDU: IP packet
+s:ip
+d:dip
+
+3. Name These wellknown ports: 
+ssh - 22
+dns, - 53
+ftp - 20/21
+tftp - 69
+http - 80
+https: 443
+telnet - 23
+
+4. VPN - HASH - md5,sha1,sha256,(data integrety), Encrption - , Tunneling
+
+5. V-Voltage
+	I - interface - MM
+	T - Transmission - lazer 850/1510 Lazer:___, LR
+	
+	task 3- Basic Network Security
+	fw + vpn + ips/ids + Av + N.A.C
+	fortinet
+	Palo alto: masociate
+	Cisco Firewall ASA:
+	
+	Task 4
+	
+	Firewall: application/statefull FW: Layer 1 - 7 
+	vs Packet filter Firewall - layer 1 to 4
+	
+	Cisco Access-List"
+	Standard ACL: Check Source IP
+	block:russia,china,NK all ip address
+	
+	
+	
+	extended ACP: sip,dip, Sport,Dport
+	
+	ex. 1: COmplete block the other side using standard ACL on @edge
+	
+	conf t
+	no access-list 1
+	access-list 2 deny 10.11.0.0 0.0.255.255
+	access-list 2 deny 10.12.0.0 0.0.255.255
+	access-list 2 deny 10.21.0.0 0.0.255.255
+	access-list 2 deny 10.22.0.0 0.0.255.255
+	access-list 2 deny 10.31.0.0 0.0.255.255
+	access-list 2 permit any
+	int gi 0/0/1
+	ip access-group 2 in
+	
+	
+	unlock ACL
+	config t
+	int gi 0/0/1
+	no ip access-group 2 in
+	do sh ip access-list 2
+	
+	conf t
+	no access-list 2
+	access-list 2 deny 10.11.0.0 0.0.255.255
+	access-list 2 deny 10.12.0.0 0.0.255.255
+	access-list 2 deny 10.21.0.0 0.0.255.255
+	access-list 2 deny 10.22.0.0 0.0.255.255
+	access-list 2 deny 10.31.0.0 0.0.255.255
+	access-list 2 permit any
+	int gi 0/0/1
+	ip access-group 2 in
+	
+	
+	ex3
+	
+	
+	conf t
+	no access-list 3
+	access-list 3 deny 10.11.0.0 0.0.255.255
+	access-list 3 deny 10.12.0.0 0.0.255.255
+	access-list 3 deny 10.21.0.0 0.0.255.255
+	access-list 3 deny 10.31.0.0 0.0.255.255
+	access-list 3 deny 10.41.0.0 0.0.255.255
+	access-list 3 deny 10.51.0.0 0.0.255.255
+	access-list 3 deny 10.52.0.0 0.0.255.255
+	access-list 3 permit any
+	int gi 0/0/1
+	ip access-group 3 in
+	
+	ex4: use the automatic deny any: if konti and permit and dami deny
+	no access-list 4
+	access-list 4
+	access-list 4 permit 10.31.0.0 0.0.255.255
+	int gi 0/0/1
+	ip access-group 4 in
+	end
+	
+	config t
+	int gi 0/0/1
+	no ip access-group 4 in
+	do sh ip access-list 2
+	
+	ex5
+	no access-list 5
+	access-list 5
+	access-list 5 permit 10.21.0.0 0.0.255.255
+	access-list 5 permit 10.31.0.0 0.0.255.255
+	int gi 0/0/1
+	ip access-group 5 in
+	end
+	
+	Other used of standard AC:
+	allow only your own to telnet
+	conf t
+	access-list 5 permit 10.32.0.0.0 0.0.255.255
+	access list 5 permit 200.0.0.32 0.0.0.0
+	Line vty 0 14
+	no access-class 5 in
+	end
+	
+	task 5: How to use extended ACL to Protect your Network.
+	
+	
+	
+	
+	
+	@Cucm
+config t
+int fa 0/0
+ ip add 10.32.100.9 255.255.255.0 Secondary
+service finger
+service tcp-small-servers
+service udp-small-servers
+ip dns server
+ip http server
+ip http secure-server
+!Make Ping EASY
+ip host pc 10.32.1.10
+ip host cm 10.32.100.8
+ip host cm2 10.32.100.9
+ip host p1 10.32.100.101
+ip host p2 10.32.100.102
+ip host sw 10.32.1.4
+ip host ed 10.32.32.1
+
+PORT     STATE SERVICE
+7/tcp    open  echo
+9/tcp    open  discard
+13/tcp   open  daytime
+19/tcp   open  chargen
+22/tcp   open  ssh
+23/tcp   open  telnet
+53/tcp   open  domain
+79/tcp   open  finger
+80/tcp   open  http
+443/tcp  open  https
+1720/tcp open  h323q931
+2000/tcp open  cisco-sccp
+2002/tcp open  globe
+4002/tcp open  mlchat-proxy
+5060/tcp open  sip
+5061/tcp open  sip-tls
+6002/tcp open  X11:2
+9002/tcp open  dynamid
+
+
+task 6 confugre an extended ACL policy to allow these
+
+cm open only http, https
+cm2 open only dns,ssh
+
+formula: protocol hacker victim port:
+tcp, udp, icmp any cm,cm2 80,
+
+@CUCM
+NO
+conf t
+no access-list 100
+access-list 100 permit tcp any host cm eq 80
+access-list 100 permit tcp any host cm eq 443
+access-list 100 permit tcp any host cm2 eq 53
+access-list 100 permit tcp any host cm2 eq 22
+access-list 100 permit tcp any host cm eq 2000
+
+int fa 0/0
+no ip access-group 100 in
+
+@CUCM
+conf t
+no 
+ip access-List extended FP1
+permit tcp any host cm eq 80
+permit tcp any host cm eq 443
+permit tcp any host cm2 eq 53
+permit tcp any host cm2 eq 22
+permit tcp any host cm eq 2000
+int f 0/0
+no ip access-group FP1 in
+
+
+ip access-List extended FP3
+permit tcp any host cm eq 53
+permit tcp any host cm eq 443
+permit tcp any host cm eq 2000
+permit ICMP any host cm2  
+permit tcp any host cm2 eq 80
+
+
+int fa 0/0
+no ip access-group FP3 in
+
+no ip access-group FP3 in
+
+
+ex3
+ip access-List extended FP4
+permit tcp any host cm gt 100
+permit tcp any host cm2 range 20
+
+int fa 0/0
+ip access-group FP4 in
+
+
+task 6: the most important lab ever:
+Exam: June/July ->
+5 lab: dhcp, acl, ssh, NAT, NTP.
+Homelab: cisco csr1000v _ 4 linux pc
+
+linux IP
+LINUX2A:
+sudo ifconfig eth0 192.168.102.21 netmask 255.255.255.0 up
+sudo route add default gw 192.168.102.5
+
+LINUX2B
+sudo ifconfig eth0 192.168.102.22 netmask 255.255.255.0 up
+sudo route add default gw 192.168.102.5
+
+LINUX3A
+sudo ifconfig eth0 192.168.103.32 netmask 255.255.255.0 up
+sudo route add default gw 192.168.103.5
+
+cisco UTM
+conf t
+no logging console
+int gi 1
+no shut
+ip add 192.168.108.5 255.255.255.0
+int gi 2
+no shut
+ip add 192.168.102.5 255.255.255.0
+int gi 3
+no shut
+ip add 192.168.103.5 255.255.0
+end
+
+exam lab number 1
+give internet to all linux Devices
+ping 8.8.8.8
+
+give internet to ciscoUTM
+conf t
+ip name-server 8.8.8.8
+ip route 0.0.0.0 0.0.0.0 192.168.108.2
+do sh ip route
+
+
+exam numbe 2. give internet to all linux via NAT
+Network Address Translation
+
+NAT inside 				NAT outside
+10.3.3.1xx				119.93.145.155
+192.168.102.22			______________
+192.168.102.21			192.168.108.121
+192.168.103.31			192.168.108.131
+
+3steps to NAT internet sharing
+config t
+access-list 8 permit 192.168.102.0 0.0.0.255
+access-list 8 permit 192.168.103.0 0.0.0.255
+!defineINSIDE vs OUTSIDE
+int gi 1
+ip nat OUTSIDE
+int gi 2
+ip nat inside
+int gi 3
+ip nat inside
+!step 3: create a static NAT pool with overload
+ip nat inside source static 192.168.102.21 192.168.108.121
+ip nat inside source static 192.168.103.31 192.168.108.131
+ip nat inside source list 8 int gi 1 overload
+do sh ip nat translation
+
+
+exam lab nunber 2
